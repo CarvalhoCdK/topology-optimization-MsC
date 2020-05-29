@@ -1,0 +1,206 @@
+
+%%% Preamble Requirements %%%
+% \usepackage{geometry}
+% \usepackage{amsfonts}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usepackage{tikz}
+
+% Optional packages such as sfmath set through python interface
+% \usepackage{sfmath}
+
+% \usetikzlibrary{arrows,chains,positioning,scopes,shapes.geometric,shapes.misc,shadows}
+
+%%% End Preamble Requirements %%%
+
+\input{C:/Users/LABOSS-1/Anaconda3/lib/site-packages/pyxdsm/diagram_styles}
+\begin{tikzpicture}
+
+\matrix[MatrixSetup]{
+%Row 0
+&
+\node [DataIO] (output_ScipyOptimizeDriver) {$\begin{array}{c}densities^{(0)}\end{array}$};&
+&
+&
+&
+&
+&
+&
+&
+&
+\\
+%Row 1
+\node [DataIO] (left_output_ScipyOptimizeDriver) {$\begin{array}{c}densities^{*}\end{array}$};&
+\node [Optimization] (ScipyOptimizeDriver) {$\text{0, 10$ \rightarrow $ 1: ScipyOptimizeDriver}$};&
+\node [DataInter] (ScipyOptimizeDriver-input@comp) {$\begin{array}{c}densities\end{array}$};&
+&
+&
+&
+&
+&
+&
+&
+\\
+%Row 2
+\node [DataIO] (left_output_input@comp) {$\begin{array}{c}densities^{*}\end{array}$};&
+&
+\node [Function] (input@comp) {$\text{1: input\_comp}$};&
+\node [DataInter] (input@comp-filter@comp) {$\begin{array}{c}densities\end{array}$};&
+&
+&
+&
+&
+&
+&
+\\
+%Row 3
+&
+&
+&
+\node [Function] (filter@comp) {$\text{2: filter\_comp}$};&
+\node [DataInter] (filter@comp-penalization@comp) {$\begin{array}{c}densities\_f\end{array}$};&
+&
+&
+&
+\node [DataInter] (filter@comp-volume@comp) {$\begin{array}{c}densities\_f\end{array}$};&
+&
+\\
+%Row 4
+&
+&
+&
+&
+\node [Function] (penalization@comp) {$\text{3: penalization\_comp}$};&
+\node [DataInter] (penalization@comp-states@comp) {$\begin{array}{c}multipliers\end{array}$};&
+\node [DataInter] (penalization@comp-buckling@comp) {$\begin{array}{c}multipliers\end{array}$};&
+&
+&
+&
+\\
+%Row 5
+&
+&
+&
+&
+&
+\node [ImplicitAnalysis] (states@comp) {$\text{4: states\_comp}$};&
+\node [DataInter] (states@comp-buckling@comp) {$\begin{array}{c}states\end{array}$};&
+\node [DataInter] (states@comp-compliance@comp) {$\begin{array}{c}states\end{array}$};&
+&
+&
+\\
+%Row 6
+&
+&
+&
+&
+&
+&
+\node [Function] (buckling@comp) {$\text{5: buckling\_comp}$};&
+&
+&
+\node [DataInter] (buckling@comp-buckling@constraint@comp) {$\begin{array}{c}critical\_loads\end{array}$};&
+\\
+%Row 7
+\node [DataIO] (left_output_compliance@comp) {$\begin{array}{c}compliance^{*}\end{array}$};&
+\node [DataInter] (compliance@comp-ScipyOptimizeDriver) {$\begin{array}{c}compliance\end{array}$};&
+&
+&
+&
+&
+&
+\node [Function] (compliance@comp) {$\text{6: compliance\_comp}$};&
+&
+&
+\\
+%Row 8
+\node [DataIO] (left_output_volume@comp) {$\begin{array}{c}volume^{*}\end{array}$};&
+\node [DataInter] (volume@comp-ScipyOptimizeDriver) {$\begin{array}{c}volume\end{array}$};&
+&
+&
+&
+&
+&
+&
+\node [Function] (volume@comp) {$\text{7: volume\_comp}$};&
+&
+\\
+%Row 9
+\node [DataIO] (left_output_buckling@constraint@comp) {$\begin{array}{c}residuals^{*}\end{array}$};&
+\node [DataInter] (buckling@constraint@comp-ScipyOptimizeDriver) {$\begin{array}{c}residuals\end{array}$};&
+&
+&
+&
+&
+&
+&
+&
+\node [Function] (buckling@constraint@comp) {$\text{8: buckling\_constraint\_comp}$};&
+\\
+%Row 10
+&
+&
+&
+&
+&
+&
+&
+&
+&
+&
+\\
+};
+
+% XDSM process chains
+{ [start chain=process]
+ \begin{pgfonlayer}{process} 
+\chainin (ScipyOptimizeDriver);
+\chainin (input@comp) [join=by ProcessHV];
+\chainin (filter@comp) [join=by ProcessHV];
+\chainin (penalization@comp) [join=by ProcessHV];
+\chainin (states@comp) [join=by ProcessHV];
+\chainin (buckling@comp) [join=by ProcessHV];
+\chainin (compliance@comp) [join=by ProcessHV];
+\chainin (volume@comp) [join=by ProcessHV];
+\chainin (buckling@constraint@comp) [join=by ProcessHV];
+\chainin (ScipyOptimizeDriver) [join=by ProcessHV];
+\end{pgfonlayer}
+}
+
+\begin{pgfonlayer}{data}
+\path
+% Horizontal edges
+(ScipyOptimizeDriver) edge [DataLine] (ScipyOptimizeDriver-input@comp)
+(compliance@comp) edge [DataLine] (compliance@comp-ScipyOptimizeDriver)
+(volume@comp) edge [DataLine] (volume@comp-ScipyOptimizeDriver)
+(buckling@constraint@comp) edge [DataLine] (buckling@constraint@comp-ScipyOptimizeDriver)
+(buckling@comp) edge [DataLine] (buckling@comp-buckling@constraint@comp)
+(penalization@comp) edge [DataLine] (penalization@comp-buckling@comp)
+(penalization@comp) edge [DataLine] (penalization@comp-states@comp)
+(states@comp) edge [DataLine] (states@comp-buckling@comp)
+(states@comp) edge [DataLine] (states@comp-compliance@comp)
+(filter@comp) edge [DataLine] (filter@comp-penalization@comp)
+(filter@comp) edge [DataLine] (filter@comp-volume@comp)
+(input@comp) edge [DataLine] (input@comp-filter@comp)
+(input@comp) edge [DataLine] (left_output_input@comp)
+(ScipyOptimizeDriver) edge [DataLine] (left_output_ScipyOptimizeDriver)
+(compliance@comp) edge [DataLine] (left_output_compliance@comp)
+(volume@comp) edge [DataLine] (left_output_volume@comp)
+(buckling@constraint@comp) edge [DataLine] (left_output_buckling@constraint@comp)
+% Vertical edges
+(ScipyOptimizeDriver-input@comp) edge [DataLine] (input@comp)
+(compliance@comp-ScipyOptimizeDriver) edge [DataLine] (ScipyOptimizeDriver)
+(volume@comp-ScipyOptimizeDriver) edge [DataLine] (ScipyOptimizeDriver)
+(buckling@constraint@comp-ScipyOptimizeDriver) edge [DataLine] (ScipyOptimizeDriver)
+(buckling@comp-buckling@constraint@comp) edge [DataLine] (buckling@constraint@comp)
+(penalization@comp-buckling@comp) edge [DataLine] (buckling@comp)
+(penalization@comp-states@comp) edge [DataLine] (states@comp)
+(states@comp-buckling@comp) edge [DataLine] (buckling@comp)
+(states@comp-compliance@comp) edge [DataLine] (compliance@comp)
+(filter@comp-penalization@comp) edge [DataLine] (penalization@comp)
+(filter@comp-volume@comp) edge [DataLine] (volume@comp)
+(input@comp-filter@comp) edge [DataLine] (filter@comp)
+(ScipyOptimizeDriver) edge [DataLine] (output_ScipyOptimizeDriver);
+\end{pgfonlayer}
+
+\end{tikzpicture}

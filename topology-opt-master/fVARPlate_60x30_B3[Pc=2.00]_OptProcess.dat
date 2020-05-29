@@ -1,0 +1,15 @@
+# it, buckling[l1, l2, l3, l4, l5], volume, compliance
+1.0000 -4.8884 -4.3144 -3.5861 -2.9879 -2.8170 0.3000 0.5754
+2.0000 -4.1712 -4.0731 -3.3938 -2.8158 -2.6425 0.3000 0.5831
+3.0000 -4.0503 -3.9047 -3.2981 -2.7518 -2.5648 0.3000 0.5861
+# OPTIMIZATION PARAMETERS 
+# nelx: 30
+# nely: 60
+# max buckling: 0.2506
+# penalization: 1.484
+# initial densities: [0.3467 0.298  0.238  ... 0.     0.     0.    ]
+# FEA MODEL DATA 
+# material: {'Ex': 1, 'Ey': 0.2, 'NUxy': 0.3}
+# loads: {'Val': 0.005, 'direction': 'x', 'dof': array([1859, 1921, 1983], dtype=int64)}
+# bc: Left Clamped
+# 
